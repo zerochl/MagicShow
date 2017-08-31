@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 //                startActivity(new Intent(MainActivity.this, AlbumActivity.class));
-                MagicShowManager.getInstance().openEdit(MainActivity.this, new ImageEditCallBack() {
+                MagicShowManager.getInstance().openEdit(MainActivity.this,"/sdcard/DCIM/test3.jpeg", new ImageEditCallBack() {
                     @Override
                     public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
                         Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getFilePath());
