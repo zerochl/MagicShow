@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_filter_tab"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:clickable="true"
+    android:background="@android:color/transparent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/image_edit_filter_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="94.0dip"
+        android:padding="5.0dip"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:background="@android:color/white"/>
+
+    <!--顶部按钮-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp">
+        <!--<TextView-->
+            <!--android:layout_width="10dp"-->
+            <!--android:layout_height="15dp"-->
+            <!--android:background="@android:color/black"/>-->
+        <!--<TextView-->
+            <!--android:layout_width="15dp"-->
+            <!--android:layout_height="10dp"-->
+            <!--android:background="@android:color/black"/>-->
+        <ImageView
+            android:id="@+id/image_edit_filter_close"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            android:src="@drawable/close_black_seq" />
+        <ImageView
+            android:id="@+id/image_edit_filter_favourite"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="8dp"
+            android:layout_marginRight="2dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/take_filter_favorite_btn"
+            android:visibility="invisible"/>
+    </RelativeLayout>
+</RelativeLayout>

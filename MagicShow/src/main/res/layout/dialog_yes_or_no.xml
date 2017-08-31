@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/corners_yuanjiao_dialog"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialog_yes_or_no_title"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:gravity="center"
+        android:text="dsadsad"
+        android:textColor="@color/qian_lan"
+        android:background="@drawable/yes_or_no_dialog_line"
+        android:visibility="gone"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/gift_balance_lack_close"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        android:src="@drawable/balance_lack_close_icon" />
+
+    <TextView
+        android:id="@+id/dialog_yes_or_no_con"
+        android:layout_below="@+id/dialog_yes_or_no_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="是否放弃已经编译的内容"
+        android:textColor="@color/greyish_brown"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="14sp" />
+    <TextView
+        android:id="@+id/dialog_yes_or_no_first_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/white"
+        android:layout_below="@+id/dialog_yes_or_no_con"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="41dp"
+        android:layout_below="@+id/dialog_yes_or_no_first_line"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/dialog_yes_or_no_btnno"
+            android:layout_width="124.5dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textColor="@color/warm_grey"
+            android:text="@string/dialog_yes_or_no_no"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            />
+
+        <TextView
+            android:id="@+id/dialog_yes_or_no_btnyes"
+            android:layout_width="124.5dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="@string/dialog_yes_or_no_yes"
+            android:textColor="@color/qian_lan"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</RelativeLayout>
