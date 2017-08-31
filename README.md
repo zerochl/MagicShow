@@ -4,12 +4,18 @@
 # 注意
 此Demo暂时只修整了图片编辑部分，拍照部分还需要继续修改，图片常规设置FBO保存作者没有实现，使用了费时费力的方式后续会进行优化。
 # 使用方式
-MagicShowManager.getInstance().openEdit(MainActivity.this, new ImageEditCallBack() {
-                    @Override
-                    public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
-                        Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getFilePath());
-                    }
-                });
+MagicShowManager.getInstance().openEdit(activity,imagePath, new ImageEditCallBack() {
+
+            @Override
+            
+            public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
+            
+                Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getFilePath());
+                
+            }
+            
+        });
+        
 提供了MagicShowManager方法，此方法暂时只支持图片编辑调用，回调里面会返回编辑成功之后的图片信息
 
 # 作者联系方式：QQ：975804495
