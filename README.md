@@ -12,5 +12,5 @@ MagicShowManager.getInstance().openEdit(MainActivity.this, new ImageEditCallBack
                 });
 提供了MagicShowManager方法，此方法暂时只支持图片编辑调用，回调里面会返回编辑成功之后的图片信息
 
-作者联系方式：QQ：975804495
-疯狂的程序员群：186305789，没准你能遇到绝影大神
+# 作者联系方式：QQ：975804495
+# 疯狂的程序员群：186305789，没准你能遇到绝影大神
