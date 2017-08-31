@@ -138,7 +138,7 @@ public class AlbumActivity extends BaseActivity{
     }
 
     private void doBackAction(){
-
+        doFinishAction();
     }
 
     private void doNextAction(){
