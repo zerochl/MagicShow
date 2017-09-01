@@ -48,8 +48,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 //                startActivity(new Intent(MainActivity.this, AlbumActivity.class));
-                Log.e("HongLi","图片角度:" + com.zero.magicshow.common.utils.BaseUtil.readPictureDegree("/sdcard/DCIM/test.jpg"));
-                MagicShowManager.getInstance().openEdit(MainActivity.this,"/sdcard/DCIM/test.jpg", new ImageEditCallBack() {
+                Log.e("HongLi","图片角度:" + com.zero.magicshow.common.utils.BaseUtil.readPictureDegree("/sdcard/DCIM/dark.jpg"));
+                MagicShowManager.getInstance().openEdit(MainActivity.this,"/sdcard/DCIM/dark.jpg", new ImageEditCallBack() {
                     @Override
                     public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
                         Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getFilePath());

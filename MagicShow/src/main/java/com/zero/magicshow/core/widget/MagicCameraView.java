@@ -294,15 +294,28 @@ public class MagicCameraView extends MagicBaseView {
         else
             gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, true)).position(0);
 
-        GLES20.glViewport(0, 0, width, height);
         if(filter == null){
+            Log.e("HongLi","仅仅美颜");
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
+            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
+                    GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
+            GLES20.glViewport(0, 0, width, height);
+            GLES20.glClearColor(0,0, 0, 0);
             beautyFilter.onDrawFrame(textureId, gLCubeBuffer, gLTextureBuffer);
         }else{
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
             GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
                     GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
+            GLES20.glViewport(0, 0, width, height);
+            GLES20.glClearColor(0,0, 0, 0);
             beautyFilter.onDrawFrame(textureId);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
+            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
+                    GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
+            GLES20.glViewport(0, 0, width, height);
+            GLES20.glClearColor(0,0, 0, 0);
             filter.onDrawFrame(mFrameBufferTextures[0], gLCubeBuffer, gLTextureBuffer);
         }
         final IntBuffer ib = IntBuffer.allocate(width * height);
