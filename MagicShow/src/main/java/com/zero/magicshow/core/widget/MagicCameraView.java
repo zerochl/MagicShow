@@ -1,5 +1,6 @@
 package com.zero.magicshow.core.widget;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,20 +9,24 @@ import android.hardware.Camera;
 import android.opengl.EGL14;
 import android.opengl.GLES20;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.zero.magicshow.common.base.MagicBaseView;
+import com.zero.magicshow.common.iface.GravityCallBack;
+import com.zero.magicshow.common.utils.BaseUtil;
+import com.zero.magicshow.common.utils.GravityUtil;
+import com.zero.magicshow.common.utils.MagicParams;
+import com.zero.magicshow.common.utils.OpenGlUtils;
+import com.zero.magicshow.common.utils.Rotation;
+import com.zero.magicshow.common.utils.SavePictureTask;
+import com.zero.magicshow.common.utils.TextureRotationUtil;
 import com.zero.magicshow.core.camera.CameraEngine;
 import com.zero.magicshow.core.camera.utils.CameraInfo;
 import com.zero.magicshow.core.encoder.video.TextureMovieEncoder;
 import com.zero.magicshow.core.filter.advanced.MagicBeautyFilter;
 import com.zero.magicshow.core.filter.base.MagicCameraInputFilter;
 import com.zero.magicshow.core.filter.utils.MagicFilterType;
-import com.zero.magicshow.common.utils.SavePictureTask;
-import com.zero.magicshow.common.utils.MagicParams;
-import com.zero.magicshow.common.utils.OpenGlUtils;
-import com.zero.magicshow.common.utils.Rotation;
-import com.zero.magicshow.common.utils.TextureRotationUtil;
-import com.zero.magicshow.common.base.MagicBaseView;
 
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -55,6 +60,7 @@ public class MagicCameraView extends MagicBaseView {
     private static TextureMovieEncoder videoEncoder = new TextureMovieEncoder();
 
     private File outputFile;
+    private int afterShootDegree = 90;//默认必须是90,为什么？不告诉你
 
     public MagicCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -63,8 +69,24 @@ public class MagicCameraView extends MagicBaseView {
         recordingStatus = -1;
         recordingEnabled = false;
         scaleType = ScaleType.CENTER_CROP;
+        GravityUtil.getInstance().init(getContext(),gravityCallBack);
+        GravityUtil.getInstance().start((Activity) getContext());
     }
-
+    private GravityCallBack gravityCallBack = new GravityCallBack() {
+        @Override
+        public void onGravityChange(int direction) {
+            Log.e("HongLi","direction:" + direction);
+            if(direction == GravityUtil.DIRECTION_LAND_LEFT){
+                afterShootDegree = 0;
+            }else if(direction == GravityUtil.DIRECTION_LAND_RIGHT){
+                afterShootDegree = 0;
+            }else if(direction == GravityUtil.DIRECTION_PORTRAIT_POSITIVE){
+                afterShootDegree = 90;
+            }else if(direction == GravityUtil.DIRECTION_PORTRAIT_NEGATIVE){
+                afterShootDegree = -90;
+            }
+        }
+    };
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         super.onSurfaceCreated(gl, config);
@@ -198,30 +220,42 @@ public class MagicCameraView extends MagicBaseView {
 
     @Override
     public void savePicture(final SavePictureTask savePictureTask) {
+        final long startTakeTime = System.nanoTime() / 1000000;
         CameraEngine.takePicture(null, null, new Camera.PictureCallback() {
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
                 CameraEngine.stopPreview();
+//                CameraEngine.releaseCamera();
                 final Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                Log.e("HongLi","end take:" + (System.nanoTime() / 1000000 - startTakeTime));
                 queueEvent(new Runnable() {
                     @Override
                     public void run() {
+                        final long startDrawTime = System.nanoTime() / 1000000;
                         final Bitmap photo = drawPhoto(bitmap,CameraEngine.getCameraInfo().isFront);
+                        Log.e("HongLi","end darw:" + (System.nanoTime() / 1000000 - startDrawTime));
                         GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
                         if (photo != null)
                             savePictureTask.execute(photo);
+                        CameraEngine.releaseCamera();
                     }
                 });
-                CameraEngine.startPreview();
+//                CameraEngine.startPreview();
+//                CameraEngine.releaseCamera();
             }
         });
     }
 
     private Bitmap drawPhoto(Bitmap bitmap,boolean isRotated){
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        int[] mFrameBuffers = new int[1];
-        int[] mFrameBufferTextures = new int[1];
+        if(afterShootDegree != 0){
+            //需要旋转角度
+            Log.e("HongLi","需要旋转90");
+            bitmap = BaseUtil.rotateBitmapByDegree(bitmap,afterShootDegree);
+        }
+        final int width = bitmap.getWidth();
+        final int height = bitmap.getHeight();
+        final int[] mFrameBuffers = new int[1];
+        final int[] mFrameBufferTextures = new int[1];
         if(beautyFilter == null)
             beautyFilter = new MagicBeautyFilter();
         beautyFilter.init();
@@ -245,12 +279,8 @@ public class MagicCameraView extends MagicBaseView {
                 GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
                 GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
-        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
-                GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
 
-        GLES20.glViewport(0, 0, width, height);
-        int textureId = OpenGlUtils.loadTexture(bitmap, OpenGlUtils.NO_TEXTURE, true);
+        final int textureId = OpenGlUtils.loadTexture(bitmap, OpenGlUtils.NO_TEXTURE, true);
 
         FloatBuffer gLCubeBuffer = ByteBuffer.allocateDirect(TextureRotationUtil.CUBE.length * 4)
                 .order(ByteOrder.nativeOrder())
@@ -264,29 +294,33 @@ public class MagicCameraView extends MagicBaseView {
         else
             gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, true)).position(0);
 
-
+        GLES20.glViewport(0, 0, width, height);
         if(filter == null){
             beautyFilter.onDrawFrame(textureId, gLCubeBuffer, gLTextureBuffer);
         }else{
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
+            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
+                    GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
             beautyFilter.onDrawFrame(textureId);
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
             filter.onDrawFrame(mFrameBufferTextures[0], gLCubeBuffer, gLTextureBuffer);
         }
-        IntBuffer ib = IntBuffer.allocate(width * height);
+        final IntBuffer ib = IntBuffer.allocate(width * height);
         GLES20.glReadPixels(0, 0, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ib);
         Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         result.copyPixelsFromBuffer(ib);
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+//        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLES20.glDeleteTextures(1, new int[]{textureId}, 0);
         GLES20.glDeleteFramebuffers(mFrameBuffers.length, mFrameBuffers, 0);
         GLES20.glDeleteTextures(mFrameBufferTextures.length, mFrameBufferTextures, 0);
-
         beautyFilter.destroy();
         beautyFilter = null;
         if(filter != null) {
             filter.onDisplaySizeChanged(surfaceWidth, surfaceHeight);
             filter.onInputSizeChanged(imageWidth, imageHeight);
         }
+
         return result;
     }
 

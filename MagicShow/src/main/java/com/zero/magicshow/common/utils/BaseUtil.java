@@ -7,7 +7,10 @@ import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +20,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zero.magicshow.R;
-import com.zero.magicshow.common.iface.DialogYesOrNoCallBack;
 import com.zero.magicshow.common.config.PathConfig;
+import com.zero.magicshow.common.iface.DialogYesOrNoCallBack;
 import com.zero.zerolib.util.AnimationUtils;
 
 import java.io.File;
@@ -32,62 +35,131 @@ import java.io.InputStream;
  */
 
 public class BaseUtil extends com.zero.zerolib.util.BaseUtil {
+    //    public static void scanFile(String filePath){
+//        MediaScannerConnection.scanFile(MagicParams.context,
+//                new String[] {filePath}, null,
+//                new MediaScannerConnection.OnScanCompletedListener() {
+//                    @Override
+//                    public void onScanCompleted(final String path, final Uri uri) {
+//
+//                    }
+//                });
+//    }
+    public static Bitmap rotateBitmapByDegree(Bitmap bm, int degree) {
+        Bitmap returnBm = null;
 
-    public static void fadeOutView(final View view){
-        if(view.getVisibility() != View.VISIBLE){
+        // 根据旋转角度，生成旋转矩阵
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        try {
+            // 将原始图片按照旋转矩阵进行旋转，并得到新的图片
+            returnBm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+        } catch (OutOfMemoryError e) {
+        }
+        if (returnBm == null) {
+            returnBm = bm;
+        }
+        if (bm != returnBm) {
+            bm.recycle();
+        }
+        return returnBm;
+    }
+
+    public static boolean isPortrait(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return dm.widthPixels < dm.heightPixels;
+    }
+
+    /**
+     * 读取照片exif信息中的旋转角度
+     *
+     * @param path 照片路径
+     * @return角度
+     */
+    public static int readPictureDegree(String path) {
+        int degree = 0;
+        try {
+            ExifInterface exifInterface = new ExifInterface(path);
+            int orientation =
+                    exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                            ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    degree = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    degree = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    degree = 270;
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return degree;
+    }
+
+    public static void fadeOutView(final View view) {
+        if (view.getVisibility() != View.VISIBLE) {
             return;
         }
         AnimationUtils.doFadeOut(view, new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {}
+            public void onAnimationStart(Animation animation) {
+            }
+
             @Override
             public void onAnimationEnd(Animation animation) {
                 view.setVisibility(View.GONE);
             }
+
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
     }
 
-    public static void fadeInView(View view){
-        if(view.getVisibility() == View.VISIBLE){
+    public static void fadeInView(View view) {
+        if (view.getVisibility() == View.VISIBLE) {
             return;
         }
         view.setVisibility(View.VISIBLE);
         AnimationUtils.doFadeIn(view);
     }
 
-    public static void openYesOrNoDialog(final Activity activity, String title, String content, String yesText, String noText, final DialogYesOrNoCallBack yesOrNoCallBack){
+    public static void openYesOrNoDialog(final Activity activity, String title, String content, String yesText, String noText, final DialogYesOrNoCallBack yesOrNoCallBack) {
         final Dialog shopTipDialog = new Dialog(activity, R.style.loading_dialog);
         View view = LayoutInflater.from(activity).inflate(R.layout.dialog_yes_or_no, null);
-        final ImageView btnClose = (ImageView)view.findViewById(R.id.gift_balance_lack_close);
-        final TextView btnYes = (TextView)view.findViewById(R.id.dialog_yes_or_no_btnyes);
-        final TextView tvTitle = (TextView)view.findViewById(R.id.dialog_yes_or_no_title);
-        final TextView tvCon = (TextView)view.findViewById(R.id.dialog_yes_or_no_con);
-        final TextView btnNo = (TextView)view.findViewById(R.id.dialog_yes_or_no_btnno);
+        final ImageView btnClose = (ImageView) view.findViewById(R.id.gift_balance_lack_close);
+        final TextView btnYes = (TextView) view.findViewById(R.id.dialog_yes_or_no_btnyes);
+        final TextView tvTitle = (TextView) view.findViewById(R.id.dialog_yes_or_no_title);
+        final TextView tvCon = (TextView) view.findViewById(R.id.dialog_yes_or_no_con);
+        final TextView btnNo = (TextView) view.findViewById(R.id.dialog_yes_or_no_btnno);
         tvTitle.setText(title);
-        if(TextUtils.isEmpty(title)){
+        if (TextUtils.isEmpty(title)) {
             tvTitle.setVisibility(View.GONE);
         }
         tvCon.setText(content);
-        if(TextUtils.isEmpty(content)){
+        if (TextUtils.isEmpty(content)) {
             tvCon.setVisibility(View.GONE);
         }
-        if(!TextUtils.isEmpty(yesText)){
+        if (!TextUtils.isEmpty(yesText)) {
             btnYes.setText(yesText);
         }
-        if(!TextUtils.isEmpty(noText)){
+        if (!TextUtils.isEmpty(noText)) {
             btnNo.setText(noText);
         }
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(v == btnClose){
+                if (v == btnClose) {
                     shopTipDialog.dismiss();
-                }else if(v == btnYes){
+                } else if (v == btnYes) {
                     yesOrNoCallBack.onYesClick();
                     shopTipDialog.dismiss();
-                }else if(v == btnNo){
+                } else if (v == btnNo) {
                     yesOrNoCallBack.onNoClick();
                     shopTipDialog.dismiss();
                 }
@@ -103,19 +175,20 @@ public class BaseUtil extends com.zero.zerolib.util.BaseUtil {
         btnYes.setOnClickListener(onClickListener);
         btnNo.setOnClickListener(onClickListener);
 //		shopTipDialog.setCanceledOnTouchOutside(true);
-        shopTipDialog.setContentView(view,new ViewGroup.LayoutParams(dipToPix(activity,267),dipToPix(activity,100)));
+        shopTipDialog.setContentView(view, new ViewGroup.LayoutParams(dipToPix(activity, 267), dipToPix(activity, 100)));
         //try catch防止activity已经销毁
-        try{
+        try {
             shopTipDialog.show();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public static File getRandomTempImageFile(){
+
+    public static File getRandomTempImageFile() {
         return new File(getRandomTempImagePath());
     }
 
-    public static String getRandomTempImagePath(){
+    public static String getRandomTempImagePath() {
         return PathConfig.getTempPath() + "/" + getRandomStr() + ".jpg";
     }
 
@@ -154,19 +227,20 @@ public class BaseUtil extends com.zero.zerolib.util.BaseUtil {
             e.printStackTrace();
         }
     }
-    public static Bitmap getImageFromAssetsFile(Context context, String fileName){
+
+    public static Bitmap getImageFromAssetsFile(Context context, String fileName) {
         Bitmap image = null;
         AssetManager am = context.getResources().getAssets();
-        try{
+        try {
             InputStream is = am.open(fileName);
             image = BitmapFactory.decodeStream(is);
             is.close();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return image;
     }
+
     /**
      * according to the width to get bitmap,if image's width more than width,
      * than compress the image's width and height
@@ -212,7 +286,7 @@ public class BaseUtil extends com.zero.zerolib.util.BaseUtil {
             if (options.outHeight / scale < height) {
                 scale = (options.outHeight / height);
             }
-            int realScale = scale - (int)scale >= 0.2 ? (int)scale + 1 : (int)scale;
+            int realScale = scale - (int) scale >= 0.2 ? (int) scale + 1 : (int) scale;
             realScale = realScale <= 0 ? 1 : realScale;
             options.inSampleSize = realScale;
             options.outWidth = options.outWidth / options.inSampleSize;
@@ -220,11 +294,11 @@ public class BaseUtil extends com.zero.zerolib.util.BaseUtil {
         } else {
             options.inSampleSize = 1;
         }
-        if(options.outHeight > 3500){
+        if (options.outHeight > 3500) {
             int realScale = options.outHeight / 3500;
             options.inSampleSize = options.inSampleSize < realScale ? realScale : options.inSampleSize;
         }
-        if(options.outWidth > 3500){
+        if (options.outWidth > 3500) {
             int realScale = options.outWidth / 3500;
             options.inSampleSize = options.inSampleSize < realScale ? realScale : options.inSampleSize;
         }

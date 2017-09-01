@@ -13,8 +13,10 @@ import android.view.View;
 import com.zero.magicshow.MagicShowManager;
 import com.zero.magicshow.activity.AlbumActivity;
 import com.zero.magicshow.activity.CameraActivity;
+import com.zero.magicshow.common.config.PathConfig;
 import com.zero.magicshow.common.entity.MagicShowResultEntity;
 import com.zero.magicshow.common.iface.ImageEditCallBack;
+import com.zero.zerolib.util.BaseUtil;
 
 public class MainActivity extends Activity {
 
@@ -22,6 +24,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(com.zero.magicshow.R.layout.activity_main);
+        PathConfig.setTempCache("/sdcard/DCIM");
         findViewById(com.zero.magicshow.R.id.button_camera).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -30,7 +33,14 @@ public class MainActivity extends Activity {
                     ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.CAMERA },
                             v.getId());
                 } else {
-                    startActivity(v.getId());
+//                    startActivity(v.getId());
+                    MagicShowManager.getInstance().openCameraAndEdit(MainActivity.this, new ImageEditCallBack() {
+                        @Override
+                        public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
+                            Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getFilePath());
+                            BaseUtil.showToast(MainActivity.this,magicShowResultEntity.getFilePath());
+                        }
+                    });
                 }
             }
         });
@@ -38,7 +48,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 //                startActivity(new Intent(MainActivity.this, AlbumActivity.class));
-                MagicShowManager.getInstance().openEdit(MainActivity.this,"/sdcard/DCIM/test3.jpeg", new ImageEditCallBack() {
+                Log.e("HongLi","图片角度:" + com.zero.magicshow.common.utils.BaseUtil.readPictureDegree("/sdcard/DCIM/test.jpg"));
+                MagicShowManager.getInstance().openEdit(MainActivity.this,"/sdcard/DCIM/test.jpg", new ImageEditCallBack() {
                     @Override
                     public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
                         Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getFilePath());

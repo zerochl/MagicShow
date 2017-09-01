@@ -1,15 +1,22 @@
 package com.zero.magicshow.core.camera;
 
+import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.util.Log;
 import android.view.SurfaceView;
 
+import com.zero.magicshow.common.config.CameraConfig;
+import com.zero.magicshow.common.utils.CameraParamUtil;
 import com.zero.magicshow.core.camera.utils.CameraUtils;
 
 import java.io.IOException;
+import java.util.List;
+
+import static android.hardware.Camera.Parameters.WHITE_BALANCE_AUTO;
 
 public class CameraEngine {
     private static Camera camera = null;
@@ -53,6 +60,7 @@ public class CameraEngine {
             camera.setPreviewCallback(null);
             camera.stopPreview();
             camera.release();
+            cameraID = 0;
             camera = null;
         }
     }
@@ -80,16 +88,43 @@ public class CameraEngine {
 
     private static void setDefaultParameters(){
         Parameters parameters = camera.getParameters();
-        if (parameters.getSupportedFocusModes().contains(
-                Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-            parameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+//        if (parameters.getSupportedFocusModes().contains(
+//                Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+//            parameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+//        }
+        //增加对聚焦模式的判断
+        List<String> focusModesList = parameters.getSupportedFocusModes();
+        if (CameraParamUtil.getInstance().isSupportedFocusMode(focusModesList, Camera.Parameters.FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        }else if(CameraParamUtil.getInstance().isSupportedFocusMode(focusModesList, Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)){
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         }
+        camera.autoFocus(autoFocusCallback);
         Size previewSize = CameraUtils.getLargePreviewSize(camera);
         parameters.setPreviewSize(previewSize.width, previewSize.height);
-        Size pictureSize = CameraUtils.getLargePictureSize(camera);
-        parameters.setPictureSize(pictureSize.width, pictureSize.height);
+//        Size pictureSize = CameraUtils.getLargePictureSize(camera);
+        parameters.setPictureSize(CameraConfig.pictureWidth, CameraConfig.pictureHeight);
         parameters.setRotation(90);
+        parameters.setPictureFormat(PixelFormat.JPEG);//设置拍照后存储的图片格式
         camera.setParameters(parameters);
+        parameters.setWhiteBalance(WHITE_BALANCE_AUTO);
+        //设置曝光值为1，酒吧比较暗,增加曝光
+        parameters.setExposureCompensation(1);
+        parameters.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
+        parameters.setAntibanding(Camera.Parameters.ANTIBANDING_AUTO);
+    }
+    private static Camera.AutoFocusCallback autoFocusCallback = new Camera.AutoFocusCallback() {
+        @Override
+        public void onAutoFocus(boolean success, Camera camera) {
+            if (success) {
+                camera.cancelAutoFocus();
+                onFocusEnd();
+            }
+        }
+    };
+
+    public static void onFocusEnd() {
+//        mFoucsView.setVisibility(INVISIBLE);
     }
 
     private static Size getPreviewSize(){
@@ -141,8 +176,9 @@ public class CameraEngine {
         info.orientation = cameraInfo.orientation;
         info.isFront = cameraID == 1 ? true : false;
         size = getPictureSize();
-        info.pictureWidth = size.width;
-        info.pictureHeight = size.height;
+        info.pictureWidth = CameraConfig.pictureWidth;
+        info.pictureHeight = CameraConfig.pictureHeight;
+        Log.e("HongLi","size.width:" + size.width + ";size.height:" + size.height + ";info.previewWidth:" + info.previewWidth + ";info.previewHeight:" + info.previewHeight);
         return info;
     }
 }

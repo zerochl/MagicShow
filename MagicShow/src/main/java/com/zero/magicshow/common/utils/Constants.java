@@ -87,5 +87,6 @@ public class Constants {
 
         return mediaFile;
     }
-    public static final int RX_JAVA_TYPE_IMAGE_EDIT = 1;//图片编译
+    public static final int RX_JAVA_TYPE_IMAGE_EDIT = 10001;//图片编译
+    public static final int RX_JAVA_TYPE_CAMERA_SHOOT = 10002;//照片拍摄
 }

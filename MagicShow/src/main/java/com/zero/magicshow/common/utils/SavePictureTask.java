@@ -1,11 +1,8 @@
 package com.zero.magicshow.common.utils;
 
 import android.graphics.Bitmap;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.AsyncTask;
-
-import com.zero.magicshow.common.utils.MagicParams;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,16 +26,12 @@ public class SavePictureTask extends AsyncTask<Bitmap, Integer, String>{
 
 	@Override
 	protected void onPostExecute(final String result) {
-		if(result != null)
-			MediaScannerConnection.scanFile(MagicParams.context,
-	                new String[] {result}, null,
-	                new MediaScannerConnection.OnScanCompletedListener() {
-	                    @Override
-	                    public void onScanCompleted(final String path, final Uri uri) {
-							if (onPictureSaveListener != null)
-								onPictureSaveListener.onSaved(result);
-						}
-            	});
+		if(result != null){
+            if (onPictureSaveListener != null){
+                onPictureSaveListener.onSaved(result);
+            }
+//            BaseUtil.scanFile(result);
+        }
 	}
 
 	@Override
@@ -48,16 +41,17 @@ public class SavePictureTask extends AsyncTask<Bitmap, Integer, String>{
 		return saveBitmap(params[0]);
 	}
 	
-	private String saveBitmap(Bitmap bitmap) {
+	private String saveBitmap(final Bitmap bitmap) {
 		if (file.exists()) {
 			file.delete();
 		}
 		try {
-			FileOutputStream out = new FileOutputStream(file);
+            Log.e("HongLi","bitmap degree:" + bitmap.getConfig());
+            FileOutputStream out = new FileOutputStream(file);
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
 			out.flush();
 			out.close();
-			bitmap.recycle();
+            bitmap.recycle();
 			return file.toString();
 		} catch (FileNotFoundException e) {
 		   e.printStackTrace();

@@ -13,19 +13,18 @@ import android.widget.TextView;
 
 import com.zero.magicshow.R;
 import com.zero.magicshow.common.base.BaseActivity;
+import com.zero.magicshow.common.base.MagicBaseView;
 import com.zero.magicshow.common.entity.MagicShowResultEntity;
 import com.zero.magicshow.common.utils.BaseUtil;
 import com.zero.magicshow.common.utils.Constants;
 import com.zero.magicshow.common.utils.RxBus;
-import com.zero.magicshow.core.MagicEngine;
 import com.zero.magicshow.common.utils.SavePictureTask;
+import com.zero.magicshow.core.MagicEngine;
 import com.zero.magicshow.core.widget.MagicImageView;
-import com.zero.magicshow.common.base.MagicBaseView;
 import com.zero.magicshow.view.edit.ImageEditFragment;
 import com.zero.magicshow.view.edit.ImageEditManager;
 import com.zero.magicshow.view.edit.iface.ImageEditNavListener;
 import com.zero.zerolib.util.AnimationUtils;
-import com.zero.zerolib.util.FileUtil;
 import com.zero.zerolib.util.StringUtil;
 
 import java.util.HashMap;
@@ -145,12 +144,6 @@ public class AlbumActivity extends BaseActivity{
         MagicEngine.getInstance().savePicture(BaseUtil.getRandomTempImageFile(), new SavePictureTask.OnPictureSaveListener() {
             @Override
             public void onSaved(String result) {
-                Log.e("HongLi","result:" + result);
-                if(FileUtil.isExist(result)){
-                    Log.e("HongLi","文件存在");
-                }else{
-                    Log.e("HongLi","文件不存在");
-                }
                 MagicShowResultEntity magicShowResultEntity = new MagicShowResultEntity();
                 magicShowResultEntity.setFilePath(result);
                 RxBus.getInstance().post(magicShowResultEntity,Constants.RX_JAVA_TYPE_IMAGE_EDIT);

@@ -10,6 +10,15 @@ public class MagicShowResultEntity {
     private String filePath;
     private int imageWidth;
     private int imageHeight;
+    private int angle;
+
+    public int getAngle() {
+        return angle;
+    }
+
+    public void setAngle(int angle) {
+        this.angle = angle;
+    }
 
     public int getResultCode() {
         return resultCode;

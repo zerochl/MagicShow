@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MagicCamera</string>
+    <string name="app_name">MagicCameraDemo</string>
     <string name="filter_none">Original</string>
     <string name="filter_amaro">Amaro</string>
 	<string name="filter_brannan">Brannan</string>

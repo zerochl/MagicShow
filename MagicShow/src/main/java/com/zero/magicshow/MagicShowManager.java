@@ -1,12 +1,19 @@
 package com.zero.magicshow;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.zero.magicshow.activity.AlbumActivity;
+import com.zero.magicshow.activity.CameraActivity;
 import com.zero.magicshow.common.entity.MagicShowResultEntity;
+import com.zero.magicshow.common.iface.CameraShootCallBack;
 import com.zero.magicshow.common.iface.ImageEditCallBack;
 import com.zero.magicshow.common.utils.Constants;
 import com.zero.magicshow.common.utils.RxBus;
@@ -31,6 +38,12 @@ public class MagicShowManager {
         PathConfig.setTempCache(cachePath);
     }
 
+    /**
+     * 执行照片编辑
+     * @param context
+     * @param imagePath
+     * @param imageEditCallBack
+     */
     public void openEdit(Context context,String imagePath, final ImageEditCallBack imageEditCallBack){
         if(null == context || TextUtils.isEmpty(imagePath) || !FileUtil.isExist(imagePath)){
             Log.e(TAG,"in open edit data error.");
@@ -48,8 +61,44 @@ public class MagicShowManager {
         context.startActivity(intent);
     }
 
-    public void openCamera(ImageEditCallBack imageEditCallBack){
+    /**
+     * 执行拍照
+     * @param context
+     * @param cameraShootCallBack
+     */
+    public void openCamera(Activity context,final CameraShootCallBack cameraShootCallBack){
+        if(null == context){
+            Log.e(TAG,"in open edit data error.");
+            return;
+        }
+        if (PermissionChecker.checkSelfPermission(context, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(context, new String[] { Manifest.permission.CAMERA },1);
+            return;
+        }
+        RxBus.getInstance().registerMain(Constants.RX_JAVA_TYPE_CAMERA_SHOOT, new Action1<MagicShowResultEntity>() {
+            @Override
+            public void call(MagicShowResultEntity magicShowResultEntity) {
+                cameraShootCallBack.onCompentFinished(magicShowResultEntity);
+                RxBus.getInstance().unregisterMain(Constants.RX_JAVA_TYPE_CAMERA_SHOOT);
+            }
+        });
+        Intent intent = new Intent(context, CameraActivity.class);
+        context.startActivity(intent);
+    }
 
+    /**
+     * 打开拍照，然后直接对拍照图片进行编辑
+     * @param context
+     * @param imageEditCallBack
+     */
+    public void openCameraAndEdit(final Activity context, final ImageEditCallBack imageEditCallBack){
+        openCamera(context, new CameraShootCallBack() {
+            @Override
+            public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
+                openEdit(context,magicShowResultEntity.getFilePath(),imageEditCallBack);
+            }
+        });
     }
 
 }
