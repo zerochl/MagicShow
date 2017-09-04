@@ -230,7 +230,7 @@ public abstract class MagicBaseView extends GLSurfaceView implements GLSurfaceVi
                 GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
                         GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
                 GLES20.glViewport(0, 0, width, height);
-//                filter.onInputSizeChanged(width, height);
+                filter.onInputSizeChanged(width, height);
 //                filter.onOutputSizeChanged(width,height);
                 filter.onDisplaySizeChanged(imageWidth, imageHeight);
 //                filter.onDisplaySizeChanged(surfaceWidth, surfaceHeight);
@@ -241,23 +241,20 @@ public abstract class MagicBaseView extends GLSurfaceView implements GLSurfaceVi
                     textureId = MagicBaseView.this.textureId;
                 }
                 GLES20.glViewport(0, 0, width, height);
-//                ((MagicBaseGroupFilter)filter).getFristFilter().onDrawFrame(textureId);
                 long startTime = System.nanoTime() / 1000000;
                 filter.onDrawFrame(textureId);
-                Log.e("HongLi","绘制消耗的时间:" + (System.nanoTime() / 1000000 - startTime));
 //                filter.onDrawFrameNormal(textureId,width, height);
                 IntBuffer ib = IntBuffer.allocate(width * height);
                 GLES20.glReadPixels(0, 0, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ib);
                 Bitmap mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-//                Log.e("HongLi","glReadPixels width:" + width + ";height:" + height + ";textureId:" + textureId + ";bitmapWidth:" + mBitmap.getWidth());
                 mBitmap.copyPixelsFromBuffer(IntBuffer.wrap(ib.array()));
+                Log.e("HongLi","消耗的时间:" + (System.nanoTime() / 1000000 - startTime));
 //                BaseUtil.saveBitmap(mBitmap,"/sdcard/DCIM/test2.jpg");
                 if(newTexture)
                     GLES20.glDeleteTextures(1, new int[]{textureId}, 0);
                 GLES20.glDeleteFramebuffers(1, mFrameBuffers, 0);
                 GLES20.glDeleteTextures(1, mFrameBufferTextures, 0);
                 GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
-//                GLES20.glViewport(0, 0, imageWidth, imageHeight);
 
                 filter.destroy();
                 filter.init();

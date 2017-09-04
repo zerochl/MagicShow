@@ -3,7 +3,6 @@ package com.zero.magicshow.core.filter.base;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import android.util.Log;
 
 import com.zero.magicshow.common.utils.OpenGlUtils;
 import com.zero.magicshow.core.filter.base.gpuimage.GPUImageFilter;
@@ -52,9 +51,9 @@ public class MagicBaseGroupFilter extends GPUImageFilter{
 			frameHeight = height;
 		}
         if (frameBuffers == null) {
-        	frameBuffers = new int[size - 1];
-            frameBufferTextures = new int[size - 1];
-            for (int i = 0; i < size - 1; i++) {
+        	frameBuffers = new int[size];
+            frameBufferTextures = new int[size];
+            for (int i = 0; i < size; i++) {
                 GLES20.glGenFramebuffers(1, frameBuffers, i);
 
                 GLES20.glGenTextures(1, frameBufferTextures, i);
@@ -124,37 +123,10 @@ public class MagicBaseGroupFilter extends GPUImageFilter{
             return OpenGlUtils.NOT_INIT;
         }
         int size = filters.size();
-        int[] frameBuffers = new int[size - 1];
-        int[] frameBufferTextures = new int[size - 1];
-        for (int i = 0; i < size - 1; i++) {
-            GLES20.glGenFramebuffers(1, frameBuffers, i);
-
-            GLES20.glGenTextures(1, frameBufferTextures, i);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, frameBufferTextures[i]);
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mOutputWidth, mOutputHeight, 0,
-                    GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
-            //设置放大过滤为使用纹理中坐标最接近的若干个颜色，通过加权平均算法得到需要绘制的像素颜色
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-            //设置缩小过滤为使用纹理中坐标最接近的一个像素的颜色作为需要绘制的像素颜色
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-            //设置环绕方向S，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-            //设置环绕方向T，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-
-//            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBuffers[i]);
-//            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
-//                    GLES20.GL_TEXTURE_2D, frameBufferTextures[i], 0);
-
-//            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-        }
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-        Log.e("HongLi","filters size:" + size + "mOutputWidth:" + mOutputWidth + ";mOutputHeight:" + mOutputHeight + ";mIntputWidth:" + mIntputWidth + ";mIntputHeight:" + mIntputHeight);
+//        Log.e("HongLi","filters size:" + size + "mOutputWidth:" + mOutputWidth + ";mOutputHeight:" + mOutputHeight + ";mIntputWidth:" + mIntputWidth + ";mIntputHeight:" + mIntputHeight);
         int previousTexture = textureId;
+        GLES20.glViewport(0,0,mOutputWidth,mOutputHeight);
         for (int i = 0; i < size; i++) {
         	GPUImageFilter filter = filters.get(i);
             boolean isNotLast = i < size - 1;
@@ -165,21 +137,19 @@ public class MagicBaseGroupFilter extends GPUImageFilter{
                 GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
                     GLES20.GL_TEXTURE_2D, frameBufferTextures[i], 0);
                 //绑定FrameBuffer后的绘制会绘制到frameBufferTextures[i]上了
-                GLES20.glViewport(0,0,mOutputWidth,mOutputHeight);
-                GLES20.glClearColor(0, 0, 0, 0);
                 filter.onDrawFrame(previousTexture, mGLCubeBuffer, mGLTextureBuffer);
+                //解除绑定位置很重要，如果下面没有纹理绘制了不能解除，否则获取纹理会出问题
                 GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
                 previousTexture = frameBufferTextures[i];
             }else{
-                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBuffers[size - 2]);
+                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBuffers[i]);
                 //为FrameBuffer挂载Texture[1]来存储颜色
                 GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
-                        GLES20.GL_TEXTURE_2D, frameBufferTextures[size - 2], 0);
-                GLES20.glViewport(0,0,mOutputWidth,mOutputHeight);
-                GLES20.glClearColor(0, 0, 0, 0);
+                        GLES20.GL_TEXTURE_2D, frameBufferTextures[i], 0);
             	filter.onDrawFrame(previousTexture, mGLCubeBuffer, mGLTextureBuffer);
             }
         }
+        //费时费力，每次都获取bitmap
 //        GLES20.glDeleteTextures(frameBufferTextures.length, frameBufferTextures, 0);
 //        GLES20.glDeleteFramebuffers(frameBuffers.length, frameBuffers, 0);
 //        int nextTextureId = textureId;

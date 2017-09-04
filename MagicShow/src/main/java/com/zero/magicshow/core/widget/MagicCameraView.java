@@ -323,7 +323,7 @@ public class MagicCameraView extends MagicBaseView {
         Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         result.copyPixelsFromBuffer(ib);
 
-//        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLES20.glDeleteTextures(1, new int[]{textureId}, 0);
         GLES20.glDeleteFramebuffers(mFrameBuffers.length, mFrameBuffers, 0);
         GLES20.glDeleteTextures(mFrameBufferTextures.length, mFrameBufferTextures, 0);
