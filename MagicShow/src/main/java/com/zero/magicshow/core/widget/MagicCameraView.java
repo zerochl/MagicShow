@@ -72,6 +72,8 @@ public class MagicCameraView extends MagicBaseView {
         scaleType = ScaleType.CENTER_CROP;
         GravityUtil.getInstance().init(getContext(),gravityCallBack);
         GravityUtil.getInstance().start((Activity) getContext());
+        setZOrderOnTop(true);
+        setZOrderMediaOverlay(true);
     }
     private GravityCallBack gravityCallBack = new GravityCallBack() {
         @Override
