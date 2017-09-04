@@ -8,8 +8,7 @@
     <com.zero.magicshow.core.widget.MagicCameraView
         android:id="@+id/camera_camera_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/camera_controller_block"/>
+        android:layout_height="match_parent"/>
 
     <ImageView
         android:id="@+id/camera_mode"
@@ -33,41 +32,42 @@
         android:layout_height="95.0dip"
         android:layout_alignParentBottom="true">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="95.0dip"
-            android:background="@android:color/white">
+            android:layout_height="95.0dip">
 
-            <ImageView
-                android:id="@+id/camera_beauty"
-                android:layout_width="0dip"
-                android:layout_height="match_parent"
-                android:layout_weight="1.0"
-                android:scaleType="center"
-                android:src="@drawable/btn_camera_beauty"/>
+            <!--<ImageView-->
+                <!--android:id="@+id/camera_beauty"-->
+                <!--android:layout_width="0dip"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1.0"-->
+                <!--android:scaleType="center"-->
+                <!--android:visibility="invisible"-->
+                <!--android:src="@drawable/btn_camera_beauty"/>-->
 
             <ImageView
                 android:id="@+id/camera_shutter"
-                android:layout_width="0dip"
-                android:layout_height="match_parent"
-                android:layout_weight="1.0"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
                 android:src="@drawable/btn_camera_shutter"/>
 
             <ImageView
                 android:id="@+id/camera_filter"
-                android:layout_width="0dip"
-                android:layout_height="match_parent"
-                android:layout_weight="1.0"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:scaleType="center"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="40dp"
                 android:src="@drawable/btn_camera_filter"/>
-        </LinearLayout>
+        </RelativeLayout>
 
         <include
             android:id="@+id/layout_filter"
             layout="@layout/filter_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:visibility="invisible" />
+            android:layout_height="match_parent"
+            android:visibility="gone" />
     </RelativeLayout>
 </RelativeLayout>

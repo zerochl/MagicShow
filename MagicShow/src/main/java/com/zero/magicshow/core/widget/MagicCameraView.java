@@ -26,6 +26,7 @@ import com.zero.magicshow.core.camera.utils.CameraInfo;
 import com.zero.magicshow.core.encoder.video.TextureMovieEncoder;
 import com.zero.magicshow.core.filter.advanced.MagicBeautyFilter;
 import com.zero.magicshow.core.filter.base.MagicCameraInputFilter;
+import com.zero.magicshow.core.filter.base.gpuimage.GPUImageFilter;
 import com.zero.magicshow.core.filter.utils.MagicFilterType;
 
 import java.io.File;
@@ -112,7 +113,6 @@ public class MagicCameraView extends MagicBaseView {
         super.onSurfaceChanged(gl, width, height);
         openCamera();
     }
-
     @Override
     public void onDrawFrame(GL10 gl) {
         super.onDrawFrame(gl);
@@ -247,17 +247,21 @@ public class MagicCameraView extends MagicBaseView {
     }
 
     private Bitmap drawPhoto(Bitmap bitmap,boolean isRotated){
+//        BaseUtil.saveBitmap(bitmap,"/sdcard/DCIM/test3.jpg");
         if(afterShootDegree != 0){
             //需要旋转角度
-            Log.e("HongLi","需要旋转90");
+            Log.e("HongLi","需要旋转:" + afterShootDegree);
             bitmap = BaseUtil.rotateBitmapByDegree(bitmap,afterShootDegree);
         }
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();
+        Log.e("HongLi","width:" + width + ";height:" + height);
         final int[] mFrameBuffers = new int[1];
         final int[] mFrameBufferTextures = new int[1];
-        if(beautyFilter == null)
-            beautyFilter = new MagicBeautyFilter();
+//        if(beautyFilter == null)
+//            beautyFilter = new MagicBeautyFilter();
+        //TODO 此处不需要任何滤镜，只是使用父类即可
+        GPUImageFilter beautyFilter = new GPUImageFilter();
         beautyFilter.init();
         beautyFilter.onDisplaySizeChanged(width, height);
         beautyFilter.onInputSizeChanged(width, height);
@@ -294,28 +298,19 @@ public class MagicCameraView extends MagicBaseView {
         else
             gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, true)).position(0);
 
+        GLES20.glViewport(0, 0, width, height);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
+        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
+                GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
         if(filter == null){
-            Log.e("HongLi","仅仅美颜");
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
-            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
-                    GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
-            GLES20.glViewport(0, 0, width, height);
-            GLES20.glClearColor(0,0, 0, 0);
             beautyFilter.onDrawFrame(textureId, gLCubeBuffer, gLTextureBuffer);
         }else{
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
-            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
-                    GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
-            GLES20.glViewport(0, 0, width, height);
-            GLES20.glClearColor(0,0, 0, 0);
             beautyFilter.onDrawFrame(textureId);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
             GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
                     GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
-            GLES20.glViewport(0, 0, width, height);
-            GLES20.glClearColor(0,0, 0, 0);
             filter.onDrawFrame(mFrameBufferTextures[0], gLCubeBuffer, gLTextureBuffer);
         }
         final IntBuffer ib = IntBuffer.allocate(width * height);

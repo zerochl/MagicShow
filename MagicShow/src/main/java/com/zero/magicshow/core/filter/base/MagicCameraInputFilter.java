@@ -4,9 +4,9 @@ import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 
 import com.zero.magicshow.R;
-import com.zero.magicshow.core.filter.base.gpuimage.GPUImageFilter;
 import com.zero.magicshow.common.utils.MagicParams;
 import com.zero.magicshow.common.utils.OpenGlUtils;
+import com.zero.magicshow.core.filter.base.gpuimage.GPUImageFilter;
 
 import java.nio.FloatBuffer;
 
@@ -87,7 +87,6 @@ public class MagicCameraInputFilter extends GPUImageFilter{
             GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureId);
             GLES20.glUniform1i(mGLUniformTexture, 0);
         }
-
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glDisableVertexAttribArray(mGLAttribPosition);
         GLES20.glDisableVertexAttribArray(mGLAttribTextureCoordinate);

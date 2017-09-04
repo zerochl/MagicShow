@@ -48,7 +48,7 @@ public class CameraActivity extends BaseActivity{
     private final int MODE_VIDEO = 2;
     private int mode = MODE_PIC;
 
-    private ImageView btnShutter,btnMode,btnFilter,btnFilterClose,btnCameraSwitch,btnBeauty;
+    private ImageView btnShutter,btnMode,btnFilter,btnFilterClose,btnCameraSwitch;//,btnBeauty;
 
     private ObjectAnimator animator;
 
@@ -74,7 +74,7 @@ public class CameraActivity extends BaseActivity{
         btnFilter               = (ImageView)findViewById(R.id.camera_filter);
         btnFilterClose          = (ImageView)findViewById(R.id.camera_closefilter);
         btnCameraSwitch         = (ImageView)findViewById(R.id.camera_switch);
-        btnBeauty               = (ImageView)findViewById(R.id.camera_beauty);
+//        btnBeauty               = (ImageView)findViewById(R.id.camera_beauty);
         magicCameraView         = (MagicCameraView)findViewById(R.id.camera_camera_view);
     }
 
@@ -90,7 +90,7 @@ public class CameraActivity extends BaseActivity{
         btnShutter.setOnClickListener(btn_listener);
         btnCameraSwitch.setOnClickListener(btn_listener);
         btnMode.setOnClickListener(btn_listener);
-        btnBeauty.setOnClickListener(btn_listener);
+//        btnBeauty.setOnClickListener(btn_listener);
     }
 
     private void initFilterView(){
@@ -160,9 +160,11 @@ public class CameraActivity extends BaseActivity{
                 showFilters();
             }else if(v == btnCameraSwitch){
                 magicEngine.switchCamera();
-            }else if(v == btnBeauty){
-                doClickBeautyAction();
-            }else if(v == btnFilterClose){
+            }
+//            else if(v == btnBeauty){
+//                doClickBeautyAction();
+//            }
+            else if(v == btnFilterClose){
                 hideFilters();
             }
         }
@@ -239,5 +241,6 @@ public class CameraActivity extends BaseActivity{
         super.onDestroy();
         CameraEngine.releaseCamera();
         GravityUtil.getInstance().stop();
+        RxBus.getInstance().unregisterMain(Constants.RX_JAVA_TYPE_CAMERA_SHOOT);
     }
 }

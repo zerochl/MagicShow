@@ -49,6 +49,7 @@ public class MagicShowManager {
             Log.e(TAG,"in open edit data error.");
             return;
         }
+        RxBus.getInstance().unregisterMain(Constants.RX_JAVA_TYPE_IMAGE_EDIT);
         RxBus.getInstance().registerMain(Constants.RX_JAVA_TYPE_IMAGE_EDIT, new Action1<MagicShowResultEntity>() {
             @Override
             public void call(MagicShowResultEntity magicShowResultEntity) {
@@ -76,6 +77,7 @@ public class MagicShowManager {
             ActivityCompat.requestPermissions(context, new String[] { Manifest.permission.CAMERA },1);
             return;
         }
+        RxBus.getInstance().unregisterMain(Constants.RX_JAVA_TYPE_CAMERA_SHOOT);
         RxBus.getInstance().registerMain(Constants.RX_JAVA_TYPE_CAMERA_SHOOT, new Action1<MagicShowResultEntity>() {
             @Override
             public void call(MagicShowResultEntity magicShowResultEntity) {

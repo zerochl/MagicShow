@@ -99,19 +99,19 @@ public class CameraEngine {
         }else if(CameraParamUtil.getInstance().isSupportedFocusMode(focusModesList, Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)){
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         }
-        camera.autoFocus(autoFocusCallback);
         Size previewSize = CameraUtils.getLargePreviewSize(camera);
         parameters.setPreviewSize(previewSize.width, previewSize.height);
 //        Size pictureSize = CameraUtils.getLargePictureSize(camera);
         parameters.setPictureSize(CameraConfig.pictureWidth, CameraConfig.pictureHeight);
-        parameters.setRotation(90);
+//        parameters.setRotation(90);
         parameters.setPictureFormat(PixelFormat.JPEG);//设置拍照后存储的图片格式
-        camera.setParameters(parameters);
         parameters.setWhiteBalance(WHITE_BALANCE_AUTO);
         //设置曝光值为1，酒吧比较暗,增加曝光
         parameters.setExposureCompensation(1);
         parameters.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
         parameters.setAntibanding(Camera.Parameters.ANTIBANDING_AUTO);
+        camera.setParameters(parameters);
+        camera.autoFocus(autoFocusCallback);
     }
     private static Camera.AutoFocusCallback autoFocusCallback = new Camera.AutoFocusCallback() {
         @Override

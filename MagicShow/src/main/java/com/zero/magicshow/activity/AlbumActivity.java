@@ -216,4 +216,9 @@ public class AlbumActivity extends BaseActivity{
         com.zero.magicshow.common.utils.BaseUtil.fadeInView(blockTopBar);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RxBus.getInstance().unregisterMain(Constants.RX_JAVA_TYPE_IMAGE_EDIT);
+    }
 }

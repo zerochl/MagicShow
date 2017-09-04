@@ -54,6 +54,7 @@ public class MagicBeautyFilter extends GPUImageFilter{
                 setFloat(mParamsLocation,0.33f);
                 break;
             default:
+                setFloat(mParamsLocation,0.0f);
                 break;
         }
     }
