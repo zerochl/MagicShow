@@ -143,10 +143,8 @@ public class AlbumActivity extends BaseActivity{
     private void doNextAction(){
         MagicEngine.getInstance().savePicture(BaseUtil.getRandomTempImageFile(), new SavePictureTask.OnPictureSaveListener() {
             @Override
-            public void onSaved(String result) {
-                MagicShowResultEntity magicShowResultEntity = new MagicShowResultEntity();
-                magicShowResultEntity.setFilePath(result);
-                RxBus.getInstance().post(magicShowResultEntity,Constants.RX_JAVA_TYPE_IMAGE_EDIT);
+            public void onSaved(MagicShowResultEntity resultEntity) {
+                RxBus.getInstance().post(resultEntity,Constants.RX_JAVA_TYPE_IMAGE_EDIT);
                 doFinishAction();
             }
         });

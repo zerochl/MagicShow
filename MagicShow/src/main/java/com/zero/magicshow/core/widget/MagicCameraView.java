@@ -125,6 +125,9 @@ public class MagicCameraView extends MagicBaseView {
             switch (recordingStatus) {
                 case RECORDING_OFF:
                     CameraInfo info = CameraEngine.getCameraInfo();
+                    if(null == info){
+                        return;
+                    }
                     videoEncoder.setPreviewSize(info.previewWidth, info.pictureHeight);
                     videoEncoder.setTextureBuffer(gLTextureBuffer);
                     videoEncoder.setCubeBuffer(gLCubeBuffer);
@@ -188,6 +191,9 @@ public class MagicCameraView extends MagicBaseView {
         if(CameraEngine.getCamera() == null)
             CameraEngine.openCamera();
         CameraInfo info = CameraEngine.getCameraInfo();
+        if(info == null){
+            return;
+        }
         if(info.orientation == 90 || info.orientation == 270){
             imageWidth = info.previewHeight;
             imageHeight = info.previewWidth;
@@ -234,11 +240,12 @@ public class MagicCameraView extends MagicBaseView {
                     @Override
                     public void run() {
                         final long startDrawTime = System.nanoTime() / 1000000;
-                        final Bitmap photo = drawPhoto(bitmap,CameraEngine.getCameraInfo().isFront);
+                        final Bitmap photo = drawPhoto(bitmap,null != CameraEngine.getCameraInfo() && CameraEngine.getCameraInfo().isFront);
                         Log.e("HongLi","end darw:" + (System.nanoTime() / 1000000 - startDrawTime));
                         GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
-                        if (photo != null)
+                        if (photo != null){
                             savePictureTask.execute(photo);
+                        }
                         CameraEngine.releaseCamera();
                     }
                 });
@@ -330,7 +337,7 @@ public class MagicCameraView extends MagicBaseView {
             filter.onDisplaySizeChanged(surfaceWidth, surfaceHeight);
             filter.onInputSizeChanged(imageWidth, imageHeight);
         }
-
+//        result = BaseUtil.rotateBitmapByDegree(result,-afterShootDegree);
         return result;
     }
 

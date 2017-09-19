@@ -167,6 +167,9 @@ public class CameraEngine {
     }
 
     public static com.zero.magicshow.core.camera.utils.CameraInfo getCameraInfo(){
+        if(null == camera){
+            return null;
+        }
         com.zero.magicshow.core.camera.utils.CameraInfo info = new com.zero.magicshow.core.camera.utils.CameraInfo();
         Size size = getPreviewSize();
         CameraInfo cameraInfo = new CameraInfo();

@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
                     MagicShowManager.getInstance().openCameraAndEdit(MainActivity.this, new ImageEditCallBack() {
                         @Override
                         public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
-                            Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getFilePath());
+                            Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getAngle() + ";" + magicShowResultEntity.getFilePath());
                             BaseUtil.showToast(MainActivity.this,magicShowResultEntity.getFilePath());
                         }
                     });

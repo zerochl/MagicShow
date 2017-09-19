@@ -10,7 +10,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -181,16 +180,12 @@ public class CameraActivity extends BaseActivity{
     }
 
     private void takePhoto(){
-        final long startTime = System.nanoTime() / 1000000;
+//        final long startTime = System.nanoTime() / 1000000;
         magicEngine.savePicture(BaseUtil.getRandomTempImageFile(), new SavePictureTask.OnPictureSaveListener() {
             @Override
-            public void onSaved(String result) {
-                Log.e("HongLi","保存成功:" + (System.nanoTime() / 1000000 - startTime));
-                MagicShowResultEntity magicShowResultEntity = new MagicShowResultEntity();
-                magicShowResultEntity.setFilePath(result);
-                magicShowResultEntity.setAngle(BaseUtil.readPictureDegree(result));
-                Log.e("HongLi","angle:" + BaseUtil.readPictureDegree(result));
-                RxBus.getInstance().post(magicShowResultEntity,Constants.RX_JAVA_TYPE_CAMERA_SHOOT);
+            public void onSaved(MagicShowResultEntity resultEntity) {
+//                Log.e("HongLi","保存成功:" + (System.nanoTime() / 1000000 - startTime));
+                RxBus.getInstance().post(resultEntity,Constants.RX_JAVA_TYPE_CAMERA_SHOOT);
                 doFinishAction();
             }
         });
