@@ -11,8 +11,7 @@
                 Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getFilePath());
                 
             }
-            
-        });
+            });
         
 打开拍照，拍照之后直接进图片编辑
 
@@ -23,8 +22,7 @@
             public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
         
             }
-            
-        });
+            });
         
 打开拍照,拍照实现了滤镜效果，CameraConfig可设置拍照图片的大小
     MagicShowManager.getInstance().openCamera(activity,new CameraShootCallBack(){
@@ -34,8 +32,7 @@
             public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
             
             }
-            
-        });
+            });
         
 提供了MagicShowManager方法，回调里面会返回编辑成功之后的图片信息
 
