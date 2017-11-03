@@ -25,6 +25,7 @@
             });
         
 打开拍照,拍照实现了滤镜效果，CameraConfig可设置拍照图片的大小
+    
     MagicShowManager.getInstance().openCamera(activity,new CameraShootCallBack(){
 
             @Override
