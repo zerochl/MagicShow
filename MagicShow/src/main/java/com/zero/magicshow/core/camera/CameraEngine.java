@@ -1,5 +1,6 @@
 package com.zero.magicshow.core.camera;
 
+import android.app.Activity;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -7,6 +8,7 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceView;
 
 import com.zero.magicshow.common.config.CameraConfig;
@@ -20,7 +22,7 @@ import static android.hardware.Camera.Parameters.WHITE_BALANCE_AUTO;
 
 public class CameraEngine {
     private static Camera camera = null;
-    private static int cameraID = 0;
+    public static int cameraID = 0;
     private static SurfaceTexture surfaceTexture;
     private static SurfaceView surfaceView;
 
@@ -55,12 +57,15 @@ public class CameraEngine {
         return false;
     }
 
-    public static void releaseCamera(){
+    public static void releaseCamera(boolean isDestory){
         if(camera != null){
             camera.setPreviewCallback(null);
             camera.stopPreview();
             camera.release();
-            cameraID = 0;
+            if(isDestory){
+                cameraID = 0;
+            }
+//            cameraID = 0;
             camera = null;
         }
     }
@@ -80,7 +85,7 @@ public class CameraEngine {
     }
 
     public static void switchCamera(){
-        releaseCamera();
+        releaseCamera(false);
         cameraID = cameraID == 0 ? 1 : 0;
         openCamera(cameraID);
         startPreview(surfaceTexture);
@@ -103,7 +108,7 @@ public class CameraEngine {
         parameters.setPreviewSize(previewSize.width, previewSize.height);
 //        Size pictureSize = CameraUtils.getLargePictureSize(camera);
         parameters.setPictureSize(CameraConfig.pictureWidth, CameraConfig.pictureHeight);
-//        parameters.setRotation(90);
+//        parameters.setRotation(cameraID == 0 ? 90 : 270);
         parameters.setPictureFormat(PixelFormat.JPEG);//设置拍照后存储的图片格式
         parameters.setWhiteBalance(WHITE_BALANCE_AUTO);
         //设置曝光值为1，酒吧比较暗,增加曝光
@@ -112,6 +117,27 @@ public class CameraEngine {
         parameters.setAntibanding(Camera.Parameters.ANTIBANDING_AUTO);
         camera.setParameters(parameters);
         camera.autoFocus(autoFocusCallback);
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(cameraID, info);
+        int degrees = 90;//getDisplayRotation(activity);
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360; // compensate the mirror
+        } else { // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        camera.setDisplayOrientation(result);
+    }
+    public static int getDisplayRotation(Activity activity) {
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        switch (rotation) {
+            case Surface.ROTATION_0: return 0;
+            case Surface.ROTATION_90: return 90;
+            case Surface.ROTATION_180: return 180;
+            case Surface.ROTATION_270: return 270;
+        }
+        return 0;
     }
     private static Camera.AutoFocusCallback autoFocusCallback = new Camera.AutoFocusCallback() {
         @Override
@@ -181,7 +207,8 @@ public class CameraEngine {
         size = getPictureSize();
         info.pictureWidth = CameraConfig.pictureWidth;
         info.pictureHeight = CameraConfig.pictureHeight;
-        Log.e("HongLi","size.width:" + size.width + ";size.height:" + size.height + ";info.previewWidth:" + info.previewWidth + ";info.previewHeight:" + info.previewHeight);
+        Log.e("HongLi","size.width:" + size.width + ";size.height:" + size.height +
+                ";info.previewWidth:" + info.previewWidth + ";info.previewHeight:" + info.previewHeight + ";isFront:" + info.isFront);
         return info;
     }
 }

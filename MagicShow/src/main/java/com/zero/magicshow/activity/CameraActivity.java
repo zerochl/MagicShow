@@ -33,7 +33,7 @@ import com.zero.magicshow.viewmanager.CameraManager;
 import com.zero.zerolib.util.AnimationUtils;
 
 /**
- * Created by why8222 on 2016/3/17.
+ * Created by zero on 2016/3/17.
  */
 public class CameraActivity extends BaseActivity{
     private LinearLayout filterLayout;
@@ -234,7 +234,7 @@ public class CameraActivity extends BaseActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        CameraEngine.releaseCamera();
+        CameraEngine.releaseCamera(true);
         GravityUtil.getInstance().stop();
         RxBus.getInstance().unregisterMain(Constants.RX_JAVA_TYPE_CAMERA_SHOOT);
     }

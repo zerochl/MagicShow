@@ -15,6 +15,7 @@ import android.view.SurfaceHolder;
 import com.zero.magicshow.common.base.MagicBaseView;
 import com.zero.magicshow.common.iface.GravityCallBack;
 import com.zero.magicshow.common.utils.BaseUtil;
+import com.zero.magicshow.common.utils.CameraBitmapUtil;
 import com.zero.magicshow.common.utils.GravityUtil;
 import com.zero.magicshow.common.utils.MagicParams;
 import com.zero.magicshow.common.utils.OpenGlUtils;
@@ -62,6 +63,7 @@ public class MagicCameraView extends MagicBaseView {
 
     private File outputFile;
     private int afterShootDegree = 90;//默认必须是90,为什么？不告诉你
+    private int frontShootDegree = -90;//默认必须是90,为什么？不告诉你
 
     public MagicCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -210,7 +212,7 @@ public class MagicCameraView extends MagicBaseView {
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         super.surfaceDestroyed(holder);
-        CameraEngine.releaseCamera();
+        CameraEngine.releaseCamera(true);
     }
 
     public void changeRecordingState(boolean isRecording) {
@@ -246,7 +248,7 @@ public class MagicCameraView extends MagicBaseView {
                         if (photo != null){
                             savePictureTask.execute(photo);
                         }
-                        CameraEngine.releaseCamera();
+                        CameraEngine.releaseCamera(true);
                     }
                 });
 //                CameraEngine.startPreview();
@@ -256,12 +258,16 @@ public class MagicCameraView extends MagicBaseView {
     }
 
     private Bitmap drawPhoto(Bitmap bitmap,boolean isRotated){
-//        BaseUtil.saveBitmap(bitmap,"/sdcard/DCIM/test3.jpg");
-        if(afterShootDegree != 0){
-            //需要旋转角度
-            Log.e("HongLi","需要旋转:" + afterShootDegree);
-            bitmap = BaseUtil.rotateBitmapByDegree(bitmap,afterShootDegree);
-        }
+//        if(afterShootDegree != 0 && !isRotated){
+//            //需要旋转角度
+//            Log.e("HongLi","需要旋转:" + afterShootDegree);
+//            bitmap = BaseUtil.rotateBitmapByDegree(bitmap,afterShootDegree);
+//        }else if(frontShootDegree !=0 && isRotated){
+//            Log.e("HongLi","需要旋转:" + frontShootDegree);
+//            bitmap = BaseUtil.rotateBitmapByDegree(bitmap,frontShootDegree);
+//        }
+        bitmap = CameraBitmapUtil.handlerCameraBitmap((Activity) getContext(),bitmap,CameraEngine.cameraID);
+        BaseUtil.saveBitmap(bitmap,"/sdcard/DCIM/test3.jpg");
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();
         Log.e("HongLi","width:" + width + ";height:" + height);
@@ -302,10 +308,11 @@ public class MagicCameraView extends MagicBaseView {
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
         gLCubeBuffer.put(TextureRotationUtil.CUBE).position(0);
-        if(isRotated)
-            gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, false)).position(0);
-        else
-            gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, true)).position(0);
+//        if(isRotated)
+//            gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, false)).position(0);
+//        else
+//            gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, true)).position(0);
+        gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, true)).position(0);
 
         GLES20.glViewport(0, 0, width, height);
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
