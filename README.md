@@ -1,6 +1,8 @@
 # MagicShow
 包含美颜等40余种实时滤镜相机，可拍照、图片修改 
 图片编辑包含常规参数设置（对比度，饱和度等）、美颜（美白，磨皮）、滤镜
+# Demo说明
+本demo并不包含相册功能，所以demo中打开Album请预先在SD卡中存储如下图片：/sdcard/DCIM/dark.jpg
 # 使用方式
     MagicShowManager.getInstance().openEdit(activity,imagePath, new ImageEditCallBack() {
 
