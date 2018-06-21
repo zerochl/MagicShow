@@ -13,16 +13,16 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("I:\\document\\real\\DuNang.keystore")
+//            storeFile file("I:\\document\\real\\DuNang.keystore")
             storePassword "android"
             keyAlias "DuNang"
             keyPassword "android"
         }
         debug {
-            storeFile file("I:\\document\\DuNangTest.keystore")
-            storePassword "android"
-            keyAlias "androiddebugkey"
-            keyPassword "android"
+//            storeFile file("I:\\document\\DuNangTest.keystore")
+//            storePassword "android"
+//            keyAlias "androiddebugkey"
+//            keyPassword "android"
         }
     }
     buildTypes {
