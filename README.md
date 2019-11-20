@@ -7,39 +7,41 @@
 图片编辑包含常规参数设置（对比度，饱和度等）、美颜（美白，磨皮）、滤镜
 # Demo说明
 本demo并不包含相册功能，所以demo中打开Album请预先在SD卡中存储如下图片：/sdcard/DCIM/dark.jpg
+# 集成方法
+```java
+dependencies {
+    implementation 'com.github.zerochl:MagicShow:1.0.4'
+}
+```
 # 使用方式
-    MagicShowManager.getInstance().openEdit(activity,imagePath, new ImageEditCallBack() {
-
-            @Override
-            
-            public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
-            
-                Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getFilePath());
-                
-            }
-            });
-        
-打开拍照，拍照之后直接进图片编辑
-
-    MagicShowManager.getInstance().openCameraAndEdit(activity,new ImageEditCallBack(){
-
-            @Override
-            
-            public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
-        
-            }
-            });
-        
-打开拍照,拍照实现了滤镜效果，CameraConfig可设置拍照图片的大小
+```java
+MagicShowManager.getInstance().openEdit(activity,imagePath, new ImageEditCallBack() {
+    @Override
+    public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
+        Log.e("HongLi","获取图片地址:" + magicShowResultEntity.getFilePath());
+    }
+});
+```
     
-    MagicShowManager.getInstance().openCamera(activity,new CameraShootCallBack(){
+打开拍照，拍照之后直接进图片编辑
+```java
+MagicShowManager.getInstance().openCameraAndEdit(activity,new ImageEditCallBack(){
+    @Override
+    public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
 
-            @Override
-            
-            public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
-            
-            }
-            });
-        
+    }
+});
+```
+    
+打开拍照,拍照实现了滤镜效果，CameraConfig可设置拍照图片的大小
+```java
+MagicShowManager.getInstance().openCamera(activity,new CameraShootCallBack(){
+    @Override
+    public void onCompentFinished(MagicShowResultEntity magicShowResultEntity) {
+
+    }
+});
+```
+    
 提供了MagicShowManager方法，回调里面会返回编辑成功之后的图片信息
 
