@@ -12,12 +12,14 @@ import android.view.Surface;
 
 public class CameraBitmapUtil {
 
-    public static Bitmap handlerCameraBitmap(Activity activity,Bitmap takeBitmap,int cameraId) {
+    public static Bitmap handlerCameraBitmap(Activity activity, Bitmap takeBitmap,int cameraId) {
         Matrix matrix = new Matrix();
         matrix.postRotate(getCameraDisplayOrientation(activity, cameraId));
         matrix.postScale(1, cameraId == 1 ? -1 : 1);
         Bitmap cropRotateScaled = Bitmap.createBitmap(takeBitmap, 0, 0, takeBitmap.getWidth(), takeBitmap.getHeight(), matrix, true);
-        takeBitmap.recycle();
+        if (cropRotateScaled != takeBitmap) {
+            takeBitmap.recycle();
+        }
         return cropRotateScaled;
     }
 

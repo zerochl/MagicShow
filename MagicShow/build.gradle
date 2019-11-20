@@ -1,15 +1,16 @@
 apply plugin: 'com.android.library'
+apply from: "$project.rootDir/tools/versions_configuration.gradle"
 // JitPack Maven
 apply plugin: 'com.github.dcendents.android-maven'
 // Your Group
 group='com.github.zerochl'
 android {
-    compileSdkVersion = 25
-    buildToolsVersion = "25.0.2"
+    compileSdkVersion getProject().compileSdkVersion
+    buildToolsVersion getProject().buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 17
-        targetSdkVersion 25
+        minSdkVersion getProject().minSdkVersion
+        targetSdkVersion getProject().targetSdkVersion
         versionCode 1
         versionName "1.0"
         externalNativeBuild {
@@ -38,14 +39,6 @@ android {
             jniLibs.srcDirs = ['src/main/jniLibs']
         }
     }
-//    ndk {
-//        moduleName = "MagicBeautify"//生成的so名字
-//        cppFlags.add("-DANDROID_NDK")
-//        cppFlags.add("-D_DEBUG")
-//        ldLibs.add("log")
-//        ldLibs.add("jnigraphics")
-//        stl = "stlport_static"
-//    }
 
     buildTypes {
         release {
@@ -53,25 +46,16 @@ android {
             proguardFiles.add(file('proguard-rules.txt'))
         }
     }
-//    publish {
-//        userOrg = 'mabeijianxi'//bintray.com用户名
-//        groupId = 'com.mabeijianxi'//jcenter上的路径
-////        userOrg = 'zero'//bintray.com用户名
-////        groupId = 'com.zero'//jcenter上的路径
-//        artifactId = 'small-video'//项目名称
-//        publishVersion = '2.0.0-beta3'//版本号
-//        desc = '利用FFmpeg来小视频录制与压缩处理!'//描述，不重要
-//        website = 'https://github.com/zerochl/FFMPEG-AAC-264-Android-32-64'//网站，不重要
-//    }
 }
 
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
     compile files('src/main/libs/zero.jar')
-    compile 'com.android.support:appcompat-v7:25+'
-    compile 'com.android.support:design:25+'
-    compile 'io.reactivex:rxjava:latest.integration'
-    compile 'io.reactivex:rxandroid:latest.integration'
+    api getProject().design
+    api getProject().appcompatV7
+    api 'io.reactivex:rxjava:latest.integration'
+    api 'io.reactivex:rxandroid:latest.integration'
+
 }

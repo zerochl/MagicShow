@@ -14,7 +14,6 @@ import android.view.SurfaceHolder;
 
 import com.zero.magicshow.common.base.MagicBaseView;
 import com.zero.magicshow.common.iface.GravityCallBack;
-import com.zero.magicshow.common.utils.BaseUtil;
 import com.zero.magicshow.common.utils.CameraBitmapUtil;
 import com.zero.magicshow.common.utils.GravityUtil;
 import com.zero.magicshow.common.utils.MagicParams;
@@ -237,11 +236,12 @@ public class MagicCameraView extends MagicBaseView {
                 CameraEngine.stopPreview();
 //                CameraEngine.releaseCamera();
                 final Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                Log.e("HongLi","end take:" + (System.nanoTime() / 1000000 - startTakeTime));
+                Log.e("HongLi","end take:" + (System.nanoTime() / 1000000 - startTakeTime) + ";recycler:" + bitmap.isRecycled());
                 queueEvent(new Runnable() {
                     @Override
                     public void run() {
                         final long startDrawTime = System.nanoTime() / 1000000;
+                        Log.e("HongLi", "before drawPhoto bitmap:" + bitmap.isRecycled());
                         final Bitmap photo = drawPhoto(bitmap,null != CameraEngine.getCameraInfo() && CameraEngine.getCameraInfo().isFront);
                         Log.e("HongLi","end darw:" + (System.nanoTime() / 1000000 - startDrawTime));
                         GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
@@ -266,11 +266,11 @@ public class MagicCameraView extends MagicBaseView {
 //            Log.e("HongLi","需要旋转:" + frontShootDegree);
 //            bitmap = BaseUtil.rotateBitmapByDegree(bitmap,frontShootDegree);
 //        }
-        bitmap = CameraBitmapUtil.handlerCameraBitmap((Activity) getContext(),bitmap,CameraEngine.cameraID);
-        BaseUtil.saveBitmap(bitmap,"/sdcard/DCIM/test3.jpg");
+        bitmap = CameraBitmapUtil.handlerCameraBitmap((Activity) getContext(), bitmap, CameraEngine.cameraID);
+//        BaseUtil.saveBitmap(bitmap,"/sdcard/DCIM/test3.jpg");
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();
-        Log.e("HongLi","width:" + width + ";height:" + height);
+        Log.e("HongLi","width:" + width + ";height:" + height + ";is recycler:" + bitmap.isRecycled());
         final int[] mFrameBuffers = new int[1];
         final int[] mFrameBufferTextures = new int[1];
 //        if(beautyFilter == null)

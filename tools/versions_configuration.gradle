@@ -1,0 +1,108 @@
+ext {
+    javaSourceCompatibility = JavaVersion.VERSION_1_8
+    appVersions = '1.1.5'
+    appCode = 55
+    compileSdkVersion = 27
+    buildToolsVersion = "27.0.3"
+    minSdkVersion = 18
+    targetSdkVersion = 26
+
+    sdk = [
+            support         : '27.1.1',
+            multidex        : '1.0.3',
+            constraintLayout: '1.1.2',
+    ]
+
+    appcompatV7 = "com.android.support:appcompat-v7:$sdk.support"
+    design = "com.android.support:design:$sdk.support"
+    recyclerviewV7 = "com.android.support:recyclerview-v7:$sdk.support"
+    cardviewV7 = "com.android.support:cardview-v7:$sdk.support"
+    constraintLayout = "com.android.support.constraint:constraint-layout:$sdk.constraintLayout"
+    multidex = "com.android.support:multidex:$sdk.multidex"
+    annotations = "com.android.support:support-annotations:$sdk.support"
+    cardViewV7 = "com.android.support:cardview-v7:$sdk.support"
+
+    libVersions = [
+            gradleTool  : '3.1.4',
+
+            MobSDK  : '2018.0319.1724',
+
+            bugly       : [
+                    crashreportUpgrade: '1.3.5',
+                    nativecrashreport : '3.3.1',
+                    tinkerSupport     : '1.1.2',
+                    tinkerAndroidLib  : '1.9.6'
+            ],
+
+            aliSecturity: [
+                    NoCaptchaSDK    : '5.4.18',
+                    SecurityBodySDK : '5.4.28',
+                    SecurityGuardSDK: '5.4.38',
+                    windvane        : '8.0.3.2.3',
+                    rpsdk           : '2.4.0.2',
+                    FaceLivenessOpen: '2.1.6.6',
+                    AVMPSDK         : '5.4.1001'
+            ],
+
+            glide       : [
+                    base           : '3.8.0',
+                    transformations: '2.0.1'
+            ],
+
+            retrofit2   : [
+                    retrofit: '2.4.0'
+            ],
+
+            okhttp3     : [
+                    loggingInterceptor: '3.11.0',
+                    okhttp            : '3.11.0',
+                    okio              : '1.15.0'
+            ],
+
+            rx          : [
+                    rxandroid   : '2.1.0',//2.0.1
+                    rxjava      : '2.2.0',//2.1.3
+                    rxlifecycle : '2.2.2',
+                    rxpermission: '0.9.4'
+            ],
+
+            gson        : '2.8.0',
+            zxing       : '1.9.4',
+            PBKDF2      : '1.1.2',
+
+            umeng       : [
+                    common   : '1.5.0',
+                    analytics: '7.5.3'
+            ],
+
+            Luban       : '1.1.3',
+            oss         : '2.4.3',
+            leakcanary  : '1.6.1',
+            download    : '1.0.5',
+            lottie      : '2.5.5',
+            ZXing       : '3.3.0',
+            Soter       : '1.3.13',
+            permission  : '2.0.0',
+            zero        : [
+                    ClassicDownload: '1.0.8'
+            ],
+            JPush       : [
+                    core: '1.2.6',
+                    push: '3.1.7'
+            ],
+            FastJson    : '1.1.56.android',
+            sensorsdata : [
+                    plugin2: '3.0.2',
+                    SensorsAnalyticsSDK: '3.0.3'
+            ],
+            yunxin      : [
+                    basesdk: '6.4.0',
+                    avchat: '6.4.0'
+            ],
+            share       : [
+                    wechatsdk: '5.1.6',
+                    weibo: '4.3.7'
+            ],
+            webviewCache: '2.1.8'
+    ]
+}

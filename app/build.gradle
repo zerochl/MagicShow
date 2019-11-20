@@ -1,15 +1,16 @@
 apply plugin: 'com.android.application'
+apply from: "$project.rootDir/tools/versions_configuration.gradle"
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion getProject().compileSdkVersion
+    buildToolsVersion getProject().buildToolsVersion
 
     defaultConfig {
         applicationId "com.zero.magicshowsim"
-        minSdkVersion 18
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion getProject().minSdkVersion
+        targetSdkVersion getProject().targetSdkVersion
+        versionCode getProject().appCode
+        versionName getProject().appVersions
     }
     signingConfigs {
         release {
@@ -53,7 +54,7 @@ android {
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile project(':MagicShow')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation project(':MagicShow')
 }

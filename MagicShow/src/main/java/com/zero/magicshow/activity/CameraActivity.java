@@ -51,6 +51,8 @@ public class CameraActivity extends BaseActivity{
 
     private ObjectAnimator animator;
 
+    private final static int PERMISSION_REQUEST_WRITE = 1001;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,9 +125,10 @@ public class CameraActivity extends BaseActivity{
 //    }
 
     private void doClickShutterAction(View view){
-        if (PermissionChecker.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(CameraActivity.this, new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },view.getId());
+        if (PermissionChecker.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(CameraActivity.this,
+                    new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },
+                    PERMISSION_REQUEST_WRITE);
         } else {
             if(mode == MODE_PIC){
                 takePhoto();
