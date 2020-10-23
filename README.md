@@ -9,6 +9,11 @@
 本demo并不包含相册功能，所以demo中打开Album请预先在SD卡中存储如下图片：/sdcard/DCIM/dark.jpg
 # 集成方法
 ```java
+// 根目录build.gradle文件下引入jitpack仓库
+maven {
+    url 'https://jitpack.io'
+}
+// 具体使用的module中添加如下依赖
 dependencies {
     implementation 'com.github.zerochl:MagicShow:1.0.4'
 }
