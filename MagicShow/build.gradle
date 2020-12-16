@@ -52,7 +52,7 @@ android {
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    compile files('src/main/libs/zero.jar')
+    api files('src/main/libs/zero.jar')
     api getProject().design
     api getProject().appcompatV7
     api 'io.reactivex:rxjava:latest.integration'

@@ -59,4 +59,6 @@
 	<string name="edit_sharpness">Sharpness</string>
 	<string name="edit_brightness">Bright</string>
 	<string name="edit_hue">Hue</string>
+	<string name="dialog_yes_or_no_yes">Confirm</string>
+	<string name="dialog_yes_or_no_no">Cancel</string>
 </resources>
