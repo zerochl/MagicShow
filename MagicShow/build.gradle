@@ -1,16 +1,16 @@
 apply plugin: 'com.android.library'
-apply from: "$project.rootDir/tools/versions_configuration.gradle"
+//apply from: "$project.rootDir/tools/versions_configuration.gradle"
 // JitPack Maven
 apply plugin: 'com.github.dcendents.android-maven'
 // Your Group
 group='com.github.zerochl'
 android {
-    compileSdkVersion getProject().compileSdkVersion
-    buildToolsVersion getProject().buildToolsVersion
+    compileSdkVersion 28
+    buildToolsVersion "28.0.0"
 
     defaultConfig {
-        minSdkVersion getProject().minSdkVersion
-        targetSdkVersion getProject().targetSdkVersion
+        minSdkVersion 18
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         externalNativeBuild {
@@ -21,7 +21,7 @@ android {
         }
         ndk{
             moduleName "MagicJni"
-            abiFilters "armeabi-v7a","arm64-v8a"//,"x86","x86_64"
+            abiFilters "armeabi-v7a","arm64-v8a","x86","x86_64"
 //            stl = "stlport_static"
         }
     }
@@ -53,8 +53,8 @@ dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     api files('src/main/libs/zero.jar')
-    api getProject().design
-    api getProject().appcompatV7
+    api "com.android.support:design:27.1.1"
+    api "com.android.support:appcompat-v7:27.1.1"
     api 'io.reactivex:rxjava:latest.integration'
     api 'io.reactivex:rxandroid:latest.integration'
 
